@@ -3,8 +3,31 @@ import heapq
 
 
 def create_open_set():
-    new_heapq=[]
-    return new_heapq
+    class open_set():
+        def __init__(self):
+            self.heap = []
+            self.dict = {}
+
+        def add(self, vn):
+            heapq.heappush(self.heap, vn)
+            self.dict[vn.state] = vn.g
+
+        def getG(self, vn):
+            return self.dict[vn.state]
+
+        def getBest(self):
+            item = heapq.heappop(self.heap)
+            #del self.dict[item.state]
+            return item
+        def __contains__(self, vn):
+            return vn.state in self.dict
+
+        def __bool__(self):
+            return bool(self.heap)
+
+        def __len__(self):
+            return len(self.heap)
+    return open_set()
 
 
 def create_closed_set():
@@ -21,7 +44,7 @@ def add_to_open(vn, open_set):
     :param vn: a node to be added
     :param open_set: the open_set that getting added the new node
     """
-    heapq.heappush(open_set, vn)
+    open_set.add(vn)
 
 
 def open_not_empty(open_set):
@@ -29,11 +52,12 @@ def open_not_empty(open_set):
     :param open_set: the open_set that getting
     :return: boolean if the set is empty
     """
-    return open_set
+    return bool(open_set)
 
 
 def get_best(open_set):
-    return heapq.heappop(open_set)
+    return open_set.getBest()
+
 
 
 def add_to_closed(vn, closed_set):
@@ -45,27 +69,20 @@ def add_to_closed(vn, closed_set):
     closed_set.add(vn)
 
 
-
 # returns False if curr_neighbor state not in open_set or has a lower g from the node in open_set
 # remove the node with the higher g from open_set (if exists)
 def duplicate_in_open(vn, open_set):
-    if vn not in open_set:
+    if not open_set.__contains__(vn):
         return False
-    for element in open_set:
-        if element == vn:
-            return element.g <= vn.g
-    return False
+    return open_set.getG(vn) <= vn.g
 
 
 # returns False if curr_neighbor state not in closed_set or has a lower g from the node in closed_set
 # remove the node with the higher g from closed_set (if exists)
 def duplicate_in_closed(vn, closed_set):
-    if vn not in closed_set:
+    if not closed_set.__contains__(vn):
         return False
-    search_node = closed_set.get(vn, None)
-    return search_node.g <= vn.g
-
-
+    return closed_set.getG(vn) <= vn.g
 
 def print_path(path):
     for i in range(len(path) - 1):
@@ -74,6 +91,7 @@ def print_path(path):
 
 
 def search(start_state, heuristic, goal_state):
+
     open_set = create_open_set()
     closed_set = create_closed_set()
     start_node = search_node(start_state, 0, heuristic(start_state))
