@@ -23,10 +23,13 @@ def advanced_heuristic(_pancake_state):
     pancake_state_dict = _pancake_state.get_state_dict()
     output = 0
     if pancake_state_dict[0] != _pancake_state.get_state_length():
-        output += 1
+        output += pancake_state_dict[0]
 
     for index in range(_pancake_state.get_state_length()-1):
-        if pancake_state_dict[index] != pancake_state_dict[index+1] + 1:
-            output += 1
+        if abs(pancake_state_dict[index] - pancake_state_dict[index+1]) > 1:
+            output += pancake_state_dict[index] + pancake_state_dict[index+1]
 
     return output
+
+def zero_hueristics(_pancake_state):
+    return 0
