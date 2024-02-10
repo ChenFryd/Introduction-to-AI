@@ -2,7 +2,7 @@ import random
 
 import heuristics
 from game_engine import player_agent_heuristics
-import alpha_beta_isolation, heuristic_alpha_beta_isolation, heuristics
+import alpha_beta_isolation_chen, heuristic_alpha_beta_isolation_chen, heuristics
 import numpy as np
 from game_state import game_state
 import matplotlib.pyplot as plt
