@@ -1,5 +1,4 @@
 import math
-import copy
 
 def base_heuristic(curr_state):
 
@@ -7,12 +6,12 @@ def base_heuristic(curr_state):
     base huerisitc, player1 moves minus player2
     :rtype: object
     """
-    #player = curr_state.get_curr_player()
+    player = curr_state.get_curr_player()
     curr_state.set_curr_player(1)
     p1_moves = len(curr_state.potential_moves())
     curr_state.set_curr_player(2)
     p2_moves = len(curr_state.potential_moves())
-    #curr_state.set_curr_player(player)
+    curr_state.set_curr_player(player)
     return p1_moves - p2_moves
 
 

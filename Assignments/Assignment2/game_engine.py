@@ -1,6 +1,6 @@
 import numpy as np
 import minimax_isolation
-import alpha_beta_isolation, heuristic_alpha_beta_isolation, heuristics
+import alpha_beta_isolation, heuristic_alpha_beta_isolation_edit, heuristics
 from game_state import game_state
 from player_agent import player_agent, player_agent_heuristics
 
