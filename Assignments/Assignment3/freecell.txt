@@ -91,11 +91,10 @@
 	   :precondition (and (clear ?card) 
 			      (clear ?newcard)
 			      (on ?card ?oldcard))
-	   :effect (and
-			(on ?card ?newcard)
+	   :effect (and (on ?card ?newcard)
 	   		(not (clear ?newcard))
 			(clear ?oldcard)
-			(clear ?card)))
+			(not (on ?card ?oldcard))))
 
   (:action move-b
 	   :parameters (?card ?newcard ?cols ?ncols)
@@ -121,17 +120,26 @@
 				(cellspace ?cells))
 	   :effect (and (incell ?card)
 			(cellspace ?ncells)
-			(clear ?oldcard)))
+			(clear ?oldcard)
+			(not (clear ?card))
+			(not (cellspace ?cells))
+			(not (on ?card ?oldcard))))
 
   (:action sendtofree-b 
 	   :parameters (?card ?cells ?ncells ?cols ?ncols)
 	   :precondition (and (clear ?card)
-	   				(successor ?ncells ?cells)
+	   				(successor ?cells ?ncells)
 					(successor ?ncols ?cols)
-					(bottomcol ?card))
+					(bottomcol ?card)
+					(cellspace ?cells)
+					(colspace ?cols))
 	   :effect (and (incell ?card)
+	   		(not (clear ?card))
 			(cellspace ?ncells)
-			(colspace ?ncols)))
+			(colspace ?ncols)
+			(not (cellspace ?cells))
+			(not (colspace ?cols))
+			(not (bottomcol ?card))))
 
 ;; Send a card a new column
 
@@ -142,9 +150,11 @@
 	 		(colspace ?cols)
 			(successor ?cols ?ncols))
 	 :effect (and (clear ?oldcard)
-	 		(clear ?card)
+	 		(not (colspace ?cols))
 			(colspace ?ncols)
-			(bottomcol ?card)))
+			(bottomcol ?card)
+			(not (on ?card ?oldcard))))
+			
 
 ;;Send a card home
 
@@ -182,7 +192,10 @@
 				(value ?homecard ?vhomecard))
 	 :effect (and (home ?card)
 	 			(colspace ?ncols)
-				(not (home ?homecard))))
+				(not (colspace ?cols))
+				(not (home ?homecard))
+				(not (bottomcol ?card))))
+				
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Move cards in free cell
@@ -192,8 +205,7 @@
 	 :parameters (?card ?suit ?vcard
 			    ?homecard ?vhomecard ?cells ?ncells)
     ;;Send a card home from a free cell.
-	 :precondition (and 
-	 			(clear ?card)
+	 :precondition (and (incell ?card)
 				(cellspace ?cells)
 				(home ?homecard)
 				(suit ?card ?suit)
@@ -202,34 +214,41 @@
 				(or (successor ?vcard ?vhomecard)
 					(jokercard ?card))
 				(value ?homecard ?vhomecard)
-				(successor ?cells ?ncells))
+				(successor ?ncells ?cells))
 	 :effect (and (home ?card)
 				(cellspace ?ncells)
-				(clear ?card)
-				(not (home ?homecard))))
+				(not (home ?homecard))
+				(not (incell ?card))
+				(not (cellspace ?cells))))
 
 (:action colfromfreecell
 	 :parameters (?card ?newcard ?cells ?ncells)
 	 :precondition (and (incell ?card)
-	 			(clear ?card)
 				(clear ?newcard)
 				(cellspace ?cells)
-				(successor ?cells ?ncells))
+				(successor ?ncells ?cells))
 	 :effect (and (clear ?card)
 	 			(not (clear ?newcard))
 				(on ?card ?newcard)
-				(cellspace ?ncells)))
+				(cellspace ?ncells)
+				(not (cellspace ?cells))
+				(not (incell ?card))))
 
 (:action newcolfromfreecell
 	 :parameters (?card ?cols ?ncols ?cells ?ncells)
 	 :precondition (and (incell ?card)
 	 			(colspace ?cols)
 				(cellspace ?cells)
-				(successor ?cells ?ncells)
+				(successor ?ncells ?cells)
 				(successor ?cols ?ncols))
 	 :effect (and (bottomcol ?card)
 	 			(clear ?card)
 	 			(colspace ?ncols)
-				(cellspace ?ncells))))
+				(cellspace ?ncells)
+				(not (incell ?card))
+				(not (colspace ?cols))
+				(not (cellspace ?cells))))
+
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
